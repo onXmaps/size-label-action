@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseIgnored } from "./index";
+import { parseIgnored, actions } from "./index";
 
 describe("parseIgnored", () => {
   it.each(["", null, undefined, "\r\n", "\n", "#", "#file"])(
@@ -47,5 +47,24 @@ describe("parseIgnored", () => {
     expect(isIgnored(".gitignore")).toBe(false);
     expect(isIgnored("yarn.lock")).toBe(true);
     expect(isIgnored("generated/source")).toBe(true);
+  });
+});
+
+describe("actions array", () => {
+  it("includes all expected GitHub pull request actions", () => {
+    expect(actions).toContain("opened");
+    expect(actions).toContain("synchronize");
+    expect(actions).toContain("reopened");
+    expect(actions).toContain("ready_for_review");
+  });
+
+  it("contains exactly 4 actions", () => {
+    expect(actions).toHaveLength(4);
+  });
+
+  it("supports ready_for_review action for draft PRs", () => {
+    // This ensures that when a draft PR is marked as ready for review,
+    // the size label action will be triggered
+    expect(actions.includes("ready_for_review")).toBe(true);
   });
 });

@@ -17,7 +17,7 @@ const defaultSizes = {
   1000: "XXL"
 };
 
-const actions = ["opened", "synchronize", "reopened"];
+const actions = ["opened", "synchronize", "reopened", "ready_for_review"];
 
 const globrexOptions = { extended: true, globstar: true };
 
@@ -177,7 +177,11 @@ async function readFile(path) {
 
 function getChangedLines(isIgnored, pullRequestFiles) {
   return pullRequestFiles
-    .map(file => isIgnored(file.previous_filename) && isIgnored(file.filename) ? 0 : file.changes)
+    .map(file =>
+      isIgnored(file.previous_filename) && isIgnored(file.filename)
+        ? 0
+        : file.changes
+    )
     .reduce((total, current) => total + current, 0);
 }
 
@@ -226,4 +230,4 @@ if (require.main === module) {
   );
 }
 
-module.exports = { main, parseIgnored }; // parseIgnored exported for testing
+module.exports = { main, parseIgnored, actions }; // parseIgnored and actions exported for testing
