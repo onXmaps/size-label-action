@@ -137,7 +137,7 @@ async function main() {
 
   if (add.length === 0 && remove.length === 0) {
     console.log("Correct label already assigned");
-    
+
     // Still set outputs even when no changes needed
     const githubOutput = process.env.GITHUB_OUTPUT;
     if (githubOutput) {
@@ -153,7 +153,7 @@ async function main() {
       fs.appendFileSync(githubOutput, outputs.join("\n") + "\n");
       debug(`Written outputs to ${githubOutput}:`, outputs);
     }
-    
+
     return false;
   }
 
