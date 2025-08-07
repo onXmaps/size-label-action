@@ -1,6 +1,6 @@
 {
   "name": "size-label-action",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "description": "GitHub action to assign labels based on pull request change sizes",
   "main": "index.js",
   "author": "Pascal",
