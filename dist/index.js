@@ -122,7 +122,10 @@ async function main() {
   }
 
   console.log("About to get label changes...");
-  console.log("eventData.pull_request.labels:", JSON.stringify(eventData.pull_request.labels, null, 2));
+  console.log(
+    "eventData.pull_request.labels:",
+    JSON.stringify(eventData.pull_request.labels, null, 2)
+  );
 
   const { add, remove } = getLabelChanges(
     sizeLabel,
@@ -138,11 +141,19 @@ async function main() {
 
   if (add.length > 0) {
     debug("Adding labels:", add);
-    await octokit.issues.addLabels({
-      ...pullRequestHome,
-      issue_number: pull_number,
-      labels: add
-    });
+    try {
+      await octokit.issues.addLabels({
+        ...pullRequestHome,
+        issue_number: pull_number,
+        labels: add
+      });
+      console.log("Successfully added labels:", add);
+    } catch (error) {
+      console.error("Failed to add labels:", error.message);
+      console.error("Error status:", error.status);
+      console.error("Error details:", JSON.stringify(error, null, 2));
+      throw error; // Re-throw to maintain existing behavior
+    }
   }
 
   for (const label of remove) {
@@ -153,7 +164,9 @@ async function main() {
         issue_number: pull_number,
         name: label
       });
+      console.log("Successfully removed label:", label);
     } catch (error) {
+      console.error("Failed to remove label:", label, "Error:", error.message);
       debug("Ignoring removing label error:", error);
     }
   }
