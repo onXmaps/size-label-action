@@ -4,6 +4,23 @@ inputs:
   sizes:
     description: "Custom size configuration"
     required: false
+  run-on-draft:
+    description: "Whether to run the action on draft pull requests"
+    required: false
+    default: "true"
+outputs:
+  size-label:
+    description: "The full size label that was applied (e.g., 'size/XL')"
+  size:
+    description: "The size value without the 'size/' prefix (e.g., 'XL')"
+  changed-lines:
+    description: "The total number of changed lines in the pull request"
+  is-custom-sizes:
+    description: "Whether custom sizes were used (true/false)"
+  sizes-config:
+    description: "The size configuration that was used (JSON string)"
+  sizeLabel:
+    description: "Legacy output - same as size-label (deprecated, use size-label instead)"
 runs:
   using: "node20"
   main: "dist/index.js"

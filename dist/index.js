@@ -54,6 +54,17 @@ async function main() {
     return false;
   }
 
+  // Check if we should run on draft PRs
+  const runOnDraft = getRunOnDraftInput();
+  const isDraft = eventData.pull_request.draft === true;
+
+  if (isDraft && !runOnDraft) {
+    console.log("Skipping draft PR as run-on-draft is disabled");
+    return false;
+  }
+
+  debug("PR is draft:", isDraft, "run-on-draft:", runOnDraft);
+
   const isIgnored = parseIgnored(process.env.IGNORED);
 
   const pullRequestHome = {
@@ -89,12 +100,25 @@ async function main() {
 
   const sizes = getSizesInput();
   const sizeLabel = getSizeLabel(changedLines, sizes);
+  const sizeValue = sizeLabel ? sizeLabel.replace("size/", "") : null;
+  const isCustomSizes = sizes !== undefined;
+
   console.log("Matching label:", sizeLabel);
+  console.log("Size value:", sizeValue);
+  console.log("Using custom sizes:", isCustomSizes);
 
   const githubOutput = process.env.GITHUB_OUTPUT;
   if (githubOutput) {
-    fs.writeFileSync(githubOutput, `sizeLabel="${sizeLabel}"`);
-    debug(`Written label '${sizeLabel}' to ${githubOutput}`);
+    const outputs = [
+      `size-label=${sizeLabel || ""}`,
+      `size=${sizeValue || ""}`,
+      `changed-lines=${changedLines}`,
+      `is-custom-sizes=${isCustomSizes}`,
+      `sizes-config=${JSON.stringify(sizes || defaultSizes)}`,
+      `sizeLabel=${sizeLabel || ""}` // Legacy support
+    ];
+    fs.appendFileSync(githubOutput, outputs.join("\n") + "\n");
+    debug(`Written outputs to ${githubOutput}:`, outputs);
   }
 
   const { add, remove } = getLabelChanges(
@@ -183,7 +207,11 @@ async function readFile(path) {
 
 function getChangedLines(isIgnored, pullRequestFiles) {
   return pullRequestFiles
-    .map(file => isIgnored(file.previous_filename) && isIgnored(file.filename) ? 0 : file.changes)
+    .map(file =>
+      isIgnored(file.previous_filename) && isIgnored(file.filename)
+        ? 0
+        : file.changes
+    )
     .reduce((total, current) => total + current, 0);
 }
 
@@ -222,6 +250,14 @@ function getSizesInput() {
   }
 }
 
+function getRunOnDraftInput() {
+  const runOnDraft = process.env.INPUT_RUN_ON_DRAFT;
+  if (runOnDraft === undefined || runOnDraft === null || runOnDraft === "") {
+    return true; // Default to true
+  }
+  return runOnDraft.toLowerCase() === "true";
+}
+
 if (require.main === require.cache[eval('__filename')]) {
   main().then(
     () => (process.exitCode = 0),
@@ -232,7 +268,14 @@ if (require.main === require.cache[eval('__filename')]) {
   );
 }
 
-module.exports = { main, parseIgnored, actions }; // parseIgnored and actions exported for testing
+module.exports = {
+  main,
+  parseIgnored,
+  actions,
+  getSizeLabel,
+  defaultSizes,
+  getRunOnDraftInput
+}; // exported for testing
 
 
 /***/ }),
