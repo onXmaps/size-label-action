@@ -115,10 +115,15 @@ async function main() {
     debug(`Written outputs to ${githubOutput}:`, outputs);
   }
 
+  console.log("About to get label changes...");
+  console.log("eventData.pull_request.labels:", JSON.stringify(eventData.pull_request.labels, null, 2));
+
   const { add, remove } = getLabelChanges(
     sizeLabel,
     eventData.pull_request.labels
   );
+
+  console.log("Label changes calculated - add:", add, "remove:", remove);
 
   if (add.length === 0 && remove.length === 0) {
     console.log("Correct label already assigned");
