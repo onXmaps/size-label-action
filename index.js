@@ -116,7 +116,10 @@ async function main() {
   }
 
   console.log("About to get label changes...");
-  console.log("eventData.pull_request.labels:", JSON.stringify(eventData.pull_request.labels, null, 2));
+  console.log(
+    "eventData.pull_request.labels:",
+    JSON.stringify(eventData.pull_request.labels, null, 2)
+  );
 
   const { add, remove } = getLabelChanges(
     sizeLabel,
