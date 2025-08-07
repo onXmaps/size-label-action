@@ -115,6 +115,7 @@ async function main() {
       `changed-lines=${changedLines}`,
       `is-custom-sizes=${isCustomSizes}`,
       `sizes-config=${JSON.stringify(sizes || defaultSizes)}`,
+      `labels-changed=true`, // Labels were actually changed
       `sizeLabel=${sizeLabel || ""}` // Legacy support
     ];
     fs.appendFileSync(githubOutput, outputs.join("\n") + "\n");
@@ -136,6 +137,23 @@ async function main() {
 
   if (add.length === 0 && remove.length === 0) {
     console.log("Correct label already assigned");
+    
+    // Still set outputs even when no changes needed
+    const githubOutput = process.env.GITHUB_OUTPUT;
+    if (githubOutput) {
+      const outputs = [
+        `size-label=${sizeLabel || ""}`,
+        `size=${sizeValue || ""}`,
+        `changed-lines=${changedLines}`,
+        `is-custom-sizes=${isCustomSizes}`,
+        `sizes-config=${JSON.stringify(sizes || defaultSizes)}`,
+        `labels-changed=false`, // New output to track if labels were actually changed
+        `sizeLabel=${sizeLabel || ""}` // Legacy support
+      ];
+      fs.appendFileSync(githubOutput, outputs.join("\n") + "\n");
+      debug(`Written outputs to ${githubOutput}:`, outputs);
+    }
+    
     return false;
   }
 

@@ -19,6 +19,8 @@ outputs:
     description: "Whether custom sizes were used (true/false)"
   sizes-config:
     description: "The size configuration that was used (JSON string)"
+  labels-changed:
+    description: "Whether labels were actually added or removed (true/false)"
   sizeLabel:
     description: "Legacy output - same as size-label (deprecated, use size-label instead)"
 runs:
