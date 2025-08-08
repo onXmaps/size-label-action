@@ -304,6 +304,18 @@ function getSizesInput() {
 
 function getRunOnDraftInput() {
   const runOnDraft = process.env.INPUT_RUN_ON_DRAFT;
+
+  // Debug all INPUT_ environment variables
+  const inputEnvs = Object.keys(process.env).filter(key =>
+    key.startsWith("INPUT_")
+  );
+  console.log(
+    "DEBUG: All INPUT_ environment variables:",
+    inputEnvs
+      .map(key => `${key}=${JSON.stringify(process.env[key])}`)
+      .join(", ")
+  );
+
   console.log(
     "DEBUG: INPUT_RUN_ON_DRAFT raw value:",
     JSON.stringify(runOnDraft)
