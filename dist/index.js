@@ -49,6 +49,8 @@ async function main() {
 
   debug("Event payload:", eventDataStr);
 
+  console.log("Action trigger - event action:", eventData.action, "PR draft status:", eventData.pull_request.draft);
+
   if (!actions.includes(eventData.action)) {
     console.log("Action will be ignored:", eventData.action);
     return false;
@@ -57,6 +59,8 @@ async function main() {
   // Check if we should run on draft PRs
   const runOnDraft = getRunOnDraftInput();
   const isDraft = eventData.pull_request.draft === true;
+
+  console.log("Draft check - isDraft:", isDraft, "runOnDraft:", runOnDraft, "action:", eventData.action);
 
   if (isDraft && !runOnDraft) {
     console.log("Skipping draft PR as run-on-draft is disabled");
