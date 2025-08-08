@@ -307,35 +307,12 @@ function getRunOnDraftInput() {
   const runOnDraft =
     process.env.INPUT_RUN_ON_DRAFT || process.env["INPUT_RUN-ON-DRAFT"];
 
-  // Debug all INPUT_ environment variables
-  const inputEnvs = Object.keys(process.env).filter(key =>
-    key.startsWith("INPUT_")
-  );
-  console.log(
-    "DEBUG: All INPUT_ environment variables:",
-    inputEnvs
-      .map(key => `${key}=${JSON.stringify(process.env[key])}`)
-      .join(", ")
-  );
-
-  console.log(
-    "DEBUG: INPUT_RUN_ON_DRAFT raw value:",
-    JSON.stringify(process.env.INPUT_RUN_ON_DRAFT)
-  );
-  console.log(
-    "DEBUG: INPUT_RUN-ON-DRAFT raw value:",
-    JSON.stringify(process.env["INPUT_RUN-ON-DRAFT"])
-  );
-  console.log("DEBUG: Final runOnDraft value:", JSON.stringify(runOnDraft));
-
   if (runOnDraft === undefined || runOnDraft === null || runOnDraft === "") {
-    console.log(
-      "DEBUG: runOnDraft is undefined/null/empty, defaulting to true"
-    );
     return true; // Default to true
   }
+
   const result = runOnDraft.toLowerCase() === "true";
-  console.log("DEBUG: runOnDraft parsed result:", result);
+  debug("run-on-draft input:", runOnDraft, "→", result);
   return result;
 }
 
