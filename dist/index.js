@@ -304,10 +304,19 @@ function getSizesInput() {
 
 function getRunOnDraftInput() {
   const runOnDraft = process.env.INPUT_RUN_ON_DRAFT;
+  console.log(
+    "DEBUG: INPUT_RUN_ON_DRAFT raw value:",
+    JSON.stringify(runOnDraft)
+  );
   if (runOnDraft === undefined || runOnDraft === null || runOnDraft === "") {
+    console.log(
+      "DEBUG: INPUT_RUN_ON_DRAFT is undefined/null/empty, defaulting to true"
+    );
     return true; // Default to true
   }
-  return runOnDraft.toLowerCase() === "true";
+  const result = runOnDraft.toLowerCase() === "true";
+  console.log("DEBUG: INPUT_RUN_ON_DRAFT parsed result:", result);
+  return result;
 }
 
 if (require.main === require.cache[eval('__filename')]) {
